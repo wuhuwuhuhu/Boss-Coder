@@ -7,6 +7,7 @@ export default function Logo(){
     return(
         <div className="logo">
             <img src={logo} alt="logo" className='logo-img'/>
+            <p className='author'>By whd</p>
         </div>
     )
 }

@@ -12,12 +12,14 @@ import {
     WhiteSpace,
     Radio,
     Button} from 'antd-mobile'
-
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 
 import Logo from '../../components/logo/logo'
-import ListItem from 'antd-mobile/lib/list/ListItem'
+import {register} from '../../redux/actions';
+const ListItem = List.Item
 
-export default class Register extends Component {
+class Register extends Component {
 
     state = {
         username: '',
@@ -32,7 +34,8 @@ export default class Register extends Component {
     }
 
     register = () =>{
-        console.log(this.state)
+        // console.log(this.state)
+        this.props.register(this.state)
     }
 
     //process input change
@@ -46,12 +49,18 @@ export default class Register extends Component {
 
     render(){
         const {type} = this.state
+        const {msg, redirectTo} = this.props.user
+        //if redirectTo is not empty, then need redirect to new route
+        if(redirectTo){
+            return <Redirect to={redirectTo}></Redirect>
+        }
         return(
             <div>
                 <NavBar>Boss&nbsp;&&nbsp;Coder</NavBar>
                 <Logo></Logo>
                 <WingBlank>
                     <List>
+                        {msg ? <div className='error-msg'>{msg}</div> : null}
                         <InputItem placeholder='please input user name' onChange={val => {this.handleChange('username', val)}}>User Name:</InputItem>
                         <InputItem placeholder='please input password' onChange={val => {this.handleChange('password', val)}} type="password">Password:</InputItem>
                         <InputItem placeholder='please repeat password' onChange={val => {this.handleChange('password2', val)}} type="password">Password:</InputItem>
@@ -73,3 +82,6 @@ export default class Register extends Component {
         )
     }
 }
+export default connect(
+    state => ({user: state.user}),{register}
+)(Register)
