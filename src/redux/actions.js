@@ -1,12 +1,14 @@
 /*
 action creators: synchronous actions and asynchronous actions
 */
-import {AUTH_SUCCESS, ERROR_MSG} from './action-types';
+import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER} from './action-types';
 import {reqLogin, reqRegister, reqUpdateuser} from '../api';
 
 //successfully authorized synchronous actions
 const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
+const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
+const resetUser = (msg) =>({type: RESET_USER, data: msg})
 
 //register asynchronous action
 export const register = (user) => {
@@ -52,6 +54,20 @@ export const login = (user) => {
         } else {
             //fail
             dispatch(errorMsg(result.msg))
+        }
+    }
+}
+
+//update asynchronous action
+export const updateUser = (user) =>{
+    return async dispatch => {
+        const response = await reqUpdateuser(user)
+        const result = response.data
+        if(result.code === 0 ) {
+            //update success
+            dispatch(receiveUser(result.data))
+        }else{
+            dispatch(resetUser(result.msg))
         }
     }
 }
