@@ -32,7 +32,7 @@ class Personal extends Component {
     render(){
         const {username, type, avatar, company, info, post, salary} = this.props.user
         return(
-            <div>
+            <div style={{marginBottom: 50, marginTop:50}}>
                 <Result imgUrl={avatar}
                 title={username}
                 message={company}

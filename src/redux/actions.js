@@ -1,14 +1,19 @@
 /*
 action creators: synchronous actions and asynchronous actions
 */
-import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER} from './action-types';
-import {reqLogin, reqRegister, reqUpdateuser, reqUser} from '../api';
+import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST} from './action-types';
+import {reqLogin, reqRegister, reqUpdateuser, reqUser, reqUserList} from '../api';
+import userList from '../components/user-list/user-list';
 
+//user actions
 //successfully authorized synchronous actions
 const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
 export const resetUser = (msg) =>({type: RESET_USER, data: msg})
+
+//userlist actions
+export const receiveUserList = (userList) => ({type: RECEIVE_USER_LIST, data: userList})
 
 //register asynchronous action
 export const register = (user) => {
@@ -81,6 +86,18 @@ export const getUser = () => {
             dispatch(receiveUser(result.data))
         }else {
             dispatch(resetUser(result.msg))
+        }
+    }
+}
+
+//get userlist asynchronous action
+export const getUserList = (type) => {
+    return async dispatch => {
+        const response = await reqUserList(type)
+        const result = response.data
+        //dispatch a synchronous action after get response
+        if(result.code === 0){
+            dispatch(receiveUserList(result.data))
         }
     }
 }

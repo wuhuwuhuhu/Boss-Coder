@@ -2,7 +2,7 @@
 reducer functions used to rturn a new state according the value of state
 */
 import {combineReducers} from 'redux'
-import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER} from './action-types';
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST} from './action-types';
 
 import {getRedirectTo} from '../utils'
 
@@ -29,10 +29,19 @@ function user(state=initUser, action) {
     
 }
 
-
+const initUserList = []
+//reducer to operate userlist's stata
+function userList(state=initUserList, action) {
+    switch (action.type) {
+        case RECEIVE_USER_LIST:
+            return action.data
+        default:
+            return state
+    }
+}
 
 export default combineReducers({
-    user
+    user, userList
 })
 //export an object: {xxx: 0, yyy: 0}
 
