@@ -4,15 +4,55 @@
 import React, {Component} from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
 import {connect} from 'react-redux';
-
+import Cookies from 'js-cookie' //operate front-end cookie,set()/remove()
+import {NavBar} from 'antd-mobile'
 import BossInfo from '../boss-info/boss-info'
 import CoderInfo from '../coder-info/coder-info';
-import Cookies from 'js-cookie' //operate front-end cookie,set()/remove()
+import Boss from "../boss/boss";
+import Coder from "../coder/coder";
+import Message from "../message/message";
+import Personal from "../personal/personal"
+import NotFound from '../../components/not-found/not-found'
+import Navfoot from '../../components/nav-footer/nav-foot'
 
 import {getRedirectTo} from '../../utils'
 import {getUser} from "../../redux/actions";
 
 class Main extends Component {
+
+    //attribute component object
+    navList = [//including all related data nav component needed
+        {
+            path: '/boss',
+            component: Boss,
+            title: "Coder List",
+            icon: 'boss',
+            text: 'coder'
+        },
+        {
+            path: '/coder',
+            component: Coder,
+            title: "Boss List",
+            icon: 'coder',
+            text: 'boss'
+        },
+        {
+            path: '/message',
+            component: Message,
+            title: "Message",
+            icon: 'message',
+            text: 'message'
+        },
+        {
+            path: '/personal',
+            component: Personal,
+            title: "Personal Information",
+            icon: 'personal',
+            text: 'Personal'
+        },
+        
+
+    ]
     componentDidMount() {
         const userid = Cookies.get('userid')
         const {_id} = this.props.user
@@ -45,18 +85,29 @@ class Main extends Component {
         }
 
 
-
-        //check user whether login
-        // const {user} = this.props
-        // if(!user._id){
-        //     return <Redirect to='/login'></Redirect>
-        // }
+        const {navList} = this
+        const path = this.props.location.pathname
+        const currentNav = navList.find(nav => nav.path === path)
+        if(currentNav) {
+            //hide boss or coder in navList
+            if(user.type === 'boss'){
+                navList[1].hide = true
+            }else{
+                navList[0].hide = true
+            }
+        }
         return(
             <div>
+                {currentNav?<NavBar>{currentNav.title}</NavBar>: null}
                 <Switch>
+                    {
+                        navList.map((nav, index) => <Route key={index} path={nav.path} component={nav.component}></Route> )
+                    }
                     <Route path='/bossinfo' component={BossInfo}></Route>
                     <Route path='/coderinfo' component={CoderInfo}></Route>
+                    
                 </Switch>
+                {currentNav?<Navfoot navList = {navList}></Navfoot>: null}
             </div>
         )
     }
