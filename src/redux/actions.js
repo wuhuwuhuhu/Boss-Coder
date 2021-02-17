@@ -8,7 +8,7 @@ import {reqLogin, reqRegister, reqUpdateuser, reqUser} from '../api';
 const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
-const resetUser = (msg) =>({type: RESET_USER, data: msg})
+export const resetUser = (msg) =>({type: RESET_USER, data: msg})
 
 //register asynchronous action
 export const register = (user) => {

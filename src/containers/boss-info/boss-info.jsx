@@ -50,7 +50,7 @@ class BossInfo extends Component {
                 <InputItem placeholder='please input job title' onChange={val => {this.handleChange('post', val)}}>Job Title</InputItem>
                 <InputItem placeholder='please input company' onChange={val => {this.handleChange('company', val)}}>Company</InputItem>
                 <InputItem placeholder='please input salary' onChange={val => {this.handleChange('salary', val)}}>Salary</InputItem>
-                <TextareaItem title = 'Job Requirements' rows={3}></TextareaItem>
+                <TextareaItem title = 'Job Requirements' onChange={val => {this.handleChange('info', val)}} rows={3}></TextareaItem>
                 <Button type='primary' onClick={this.save}>SAVE</Button>
 
             </div>
