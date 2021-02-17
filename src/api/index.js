@@ -11,3 +11,6 @@ export const reqLogin = (user) => ajax('/login', user, 'POST')
 
 //request update interface
 export const reqUpdateuser = (user) => ajax('/update', user, 'POST')
+
+//get user info
+export const reqUser = () => ajax('/user')

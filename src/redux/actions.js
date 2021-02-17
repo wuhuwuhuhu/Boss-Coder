@@ -2,7 +2,7 @@
 action creators: synchronous actions and asynchronous actions
 */
 import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER} from './action-types';
-import {reqLogin, reqRegister, reqUpdateuser} from '../api';
+import {reqLogin, reqRegister, reqUpdateuser, reqUser} from '../api';
 
 //successfully authorized synchronous actions
 const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
@@ -67,6 +67,19 @@ export const updateUser = (user) =>{
             //update success
             dispatch(receiveUser(result.data))
         }else{
+            dispatch(resetUser(result.msg))
+        }
+    }
+}
+
+//get user info asynchronous actin
+export const getUser = () => {
+    return async dispatch => {
+        const response = await reqUser()
+        const result = response.data
+        if(result.code === 0) {
+            dispatch(receiveUser(result.data))
+        }else {
             dispatch(resetUser(result.msg))
         }
     }
