@@ -1,8 +1,10 @@
 /*
 action creators: synchronous actions and asynchronous actions
 */
-import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST} from './action-types';
-import {reqLogin, reqRegister, reqUpdateuser, reqUser, reqUserList} from '../api';
+import io from 'socket.io-client'
+
+import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, REVEIVE_MSG} from './action-types';
+import {reqLogin, reqRegister, reqUpdateuser, reqUser, reqUserList, reqChatMsgList, reqReadMsg} from '../api';
 import userList from '../components/user-list/user-list';
 
 //user actions
@@ -11,6 +13,9 @@ const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
 export const resetUser = (msg) =>({type: RESET_USER, data: msg})
+const receiveMsgList = ({users, chatMsgs}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs} })
+//receive one message
+const receiveMsg = (chatMsg) => ({type: REVEIVE_MSG, data: chatMsg})
 
 //userlist actions
 export const receiveUserList = (userList) => ({type: RECEIVE_USER_LIST, data: userList})
@@ -33,6 +38,7 @@ export const register = (user) => {
         const result = response.data
         if(result.code === 0){
             //success
+            getMsgList(dispatch, result.data._id)
             dispatch(authsuccess(result.data))
         } else {
             //fail
@@ -55,6 +61,7 @@ export const login = (user) => {
         const result = response.data
         if(result.code === 0){
             //success
+            getMsgList(dispatch,result.user._id)
             dispatch(authsuccess(result.user))
         } else {
             //fail
@@ -83,6 +90,7 @@ export const getUser = () => {
         const response = await reqUser()
         const result = response.data
         if(result.code === 0) {
+            getMsgList(dispatch,result.data._id)
             dispatch(receiveUser(result.data))
         }else {
             dispatch(resetUser(result.msg))
@@ -99,5 +107,45 @@ export const getUserList = (type) => {
         if(result.code === 0){
             dispatch(receiveUserList(result.data))
         }
+    }
+}
+
+//send msg asynchronous action 
+
+/*Singleton:
+ensure a class has only one instance, and provide a global point of access to it
+encapsulated 'just-in-time initialization' or 'initialization on first use'
+before instantialize: check whether the object exist, only instantialize when not
+after: save instance
+*/
+function initIO(dispatch, userid){
+    if(!io.socket) {
+        io.socket = io('ws://localhost:4000')
+        io.socket.on('receiveMsg', function(chatMsg) {
+            console.log('client receive ', chatMsg)
+            //filter related msg
+            if(userid === chatMsg.from || userid === chatMsg.to)
+            dispatch(receiveMsg(chatMsg))
+        })
+    }
+    
+}
+
+//get msg list asyn
+async function getMsgList(dispatch, userid) {
+    initIO(dispatch, userid)
+    const response = await reqChatMsgList()
+    const result = response.data
+    if(result.code === 0){
+       const {users, chatMsgs} = result.data
+       dispatch(receiveMsgList({users, chatMsgs}))
+
+    }
+}
+
+export const sendMsg = (from, to ,content) => {
+    return dispatch => {
+        console.log('send' ,{from, to, content})
+        io.socket.emit('sendMsg',{from, to, content})
     }
 }

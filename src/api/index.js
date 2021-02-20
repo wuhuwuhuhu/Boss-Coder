@@ -17,3 +17,9 @@ export const reqUser = () => ajax('/user')
 
 //get userlist
 export const reqUserList = (type) => ajax('/userlist', {type})
+
+//get usrt's chat list
+export const reqChatMsgList =() => ajax('/msglist')
+
+//update msg read to true
+export const reqReadMsg = (from) => ajax('/readmsg')

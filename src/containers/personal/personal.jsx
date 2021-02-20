@@ -12,6 +12,8 @@ const Item = List.Item
 const Brief = Item.Brief
 
 class Personal extends Component {
+    
+
     logout= () => {
         Modal.alert('Log Out', 'Do you really want to log out?',[
             {

@@ -2,7 +2,7 @@
 reducer functions used to rturn a new state according the value of state
 */
 import {combineReducers} from 'redux'
-import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST} from './action-types';
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, REVEIVE_MSG} from './action-types';
 
 import {getRedirectTo} from '../utils'
 
@@ -40,8 +40,38 @@ function userList(state=initUserList, action) {
     }
 }
 
+
+const initChat = {
+    users: {}, //all users [{userid: {username, avatar}}]
+    chatMsgs:[], //user related msg
+    unReadCount: 0
+}
+
+//reducer to generate chat status
+function chat(state=initChat, action) {
+    switch(action.type){
+        case RECEIVE_MSG_LIST: //data: {users, chatMsgs}
+            const {users, chatMsgs} = action.data
+            return {
+                users,
+                chatMsgs,
+                unReadCount: 0
+            }
+        case REVEIVE_MSG: 
+            const chatMsg = action.data
+            return {
+                users: state.users,
+                chatMsgs: [...state.chatMsgs, chatMsg],
+                unReadCount: 0
+            }
+        default:
+            return state
+    }
+}
+
+
 export default combineReducers({
-    user, userList
+    user, userList, chat
 })
 //export an object: {xxx: 0, yyy: 0}
 

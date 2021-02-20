@@ -14,7 +14,7 @@ import Message from "../message/message";
 import Personal from "../personal/personal"
 import NotFound from '../../components/not-found/not-found'
 import Navfoot from '../../components/nav-footer/nav-foot'
-
+import Chat from '../chat/chat'
 import {getRedirectTo} from '../../utils'
 import {getUser} from "../../redux/actions";
 
@@ -98,14 +98,14 @@ class Main extends Component {
         }
         return(
             <div>
-                {currentNav?<NavBar>{currentNav.title}</NavBar>: null}
+                {currentNav?<NavBar className='sticky-header'>{currentNav.title}</NavBar>: null}
                 <Switch>
                     {
                         navList.map((nav, index) => <Route key={index} path={nav.path} component={nav.component}></Route> )
                     }
                     <Route path='/bossinfo' component={BossInfo}></Route>
                     <Route path='/coderinfo' component={CoderInfo}></Route>
-                    
+                    <Route path='/chat/:userid' component={Chat}></Route>
                 </Switch>
                 {currentNav?<Navfoot navList = {navList}></Navfoot>: null}
             </div>

@@ -1,5 +1,4 @@
 import io from 'socket.io-client'
-debugger
 const socket = io('ws://localhost:4000')
 
 socket.on('receiveMsg', function (data) {
