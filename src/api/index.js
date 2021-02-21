@@ -22,4 +22,4 @@ export const reqUserList = (type) => ajax('/userlist', {type})
 export const reqChatMsgList =() => ajax('/msglist')
 
 //update msg read to true
-export const reqReadMsg = (from) => ajax('/readmsg')
+export const reqReadMsg = (from) => ajax('/readmsg', {from}, 'POST')

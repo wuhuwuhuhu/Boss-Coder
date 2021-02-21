@@ -3,7 +3,7 @@ action creators: synchronous actions and asynchronous actions
 */
 import io from 'socket.io-client'
 
-import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, REVEIVE_MSG} from './action-types';
+import {AUTH_SUCCESS, ERROR_MSG, RESET_USER, RECEIVE_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, REVEIVE_MSG, READ_TARGET_MSG} from './action-types';
 import {reqLogin, reqRegister, reqUpdateuser, reqUser, reqUserList, reqChatMsgList, reqReadMsg} from '../api';
 import userList from '../components/user-list/user-list';
 
@@ -13,9 +13,11 @@ const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
 export const resetUser = (msg) =>({type: RESET_USER, data: msg})
-const receiveMsgList = ({users, chatMsgs}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs} })
+const receiveMsgList = ({users, chatMsgs, userid}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs, userid} })
 //receive one message
-const receiveMsg = (chatMsg) => ({type: REVEIVE_MSG, data: chatMsg})
+const receiveMsg = ({chatMsg, userid}) => ({type: REVEIVE_MSG, data: {chatMsg, userid}})
+const readTargetMsg = ({count, from, to}) => ({type: READ_TARGET_MSG, data: {count, from, to}})
+
 
 //userlist actions
 export const receiveUserList = (userList) => ({type: RECEIVE_USER_LIST, data: userList})
@@ -122,10 +124,10 @@ function initIO(dispatch, userid){
     if(!io.socket) {
         io.socket = io('ws://localhost:4000')
         io.socket.on('receiveMsg', function(chatMsg) {
-            console.log('client receive ', chatMsg)
+            // console.log('client receive ', chatMsg)
             //filter related msg
             if(userid === chatMsg.from || userid === chatMsg.to)
-            dispatch(receiveMsg(chatMsg))
+            dispatch(receiveMsg({chatMsg, userid}))
         })
     }
     
@@ -138,14 +140,25 @@ async function getMsgList(dispatch, userid) {
     const result = response.data
     if(result.code === 0){
        const {users, chatMsgs} = result.data
-       dispatch(receiveMsgList({users, chatMsgs}))
+       dispatch(receiveMsgList({users, chatMsgs, userid}))
 
     }
 }
 
 export const sendMsg = (from, to ,content) => {
     return dispatch => {
-        console.log('send' ,{from, to, content})
+        // console.log('send' ,{from, to, content})
         io.socket.emit('sendMsg',{from, to, content})
+    }
+}
+
+export const readMsg = (from, to) => {
+    return async dispatch => {
+        const response = await reqReadMsg(from)
+        const result = response.data
+        if(result.code === 0){
+            const count = result.data
+            dispatch(readTargetMsg({count, from, to}))
+        }
     }
 }

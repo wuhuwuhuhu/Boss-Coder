@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {NavBar, List, InputItem, Grid, Icon} from 'antd-mobile'
 
 
-import {sendMsg} from '../../redux/actions'
+import {sendMsg, readMsg} from '../../redux/actions'
 
 const Item = List.Item
 class Chat extends Component {
@@ -23,10 +23,23 @@ class Chat extends Component {
     componentDidMount() {
         //scroll to bottom
         window.scrollTo(0, document.body.scrollHeight)
+
+        //request read 
+        const from = this.props.match.params.userid
+        const to = this.props.user._id
+        this.props.readMsg(from, to)
     }
     
     componentDidUpdate() {
         window.scrollTo(0, document.body.scrollHeight)
+
+    }
+
+    componentWillUnmount(){
+        //request read 
+        const from = this.props.match.params.userid
+        const to = this.props.user._id
+        this.props.readMsg(from, to)
     }
     toggleShow = () => {
         const isShowEmojis = !this.state.isShowEmojis
@@ -97,7 +110,6 @@ class Chat extends Component {
 
                 <div className='am-tab-bar'>
                     <InputItem placeholder='please input here' 
-                    style={{"letter-spacing":"1px"}}
                     value={this.state.content}
                     onChange={val => this.setState({content: val})} 
                     onFocus={() => this.setState({isShowEmojis: false})}
@@ -123,5 +135,5 @@ class Chat extends Component {
     }
 }
 export default connect(
-(state => ({user: state.user, chat: state.chat})),{sendMsg}
+(state => ({user: state.user, chat: state.chat})),{sendMsg, readMsg}
 )(Chat)

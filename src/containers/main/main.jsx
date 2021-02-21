@@ -62,7 +62,7 @@ class Main extends Component {
     }
 
     render(){
-
+        const {unReadCount} = this.props
         //get userid from ciookie
         const userid = Cookies.get('userid')
         //if not login, redirect to login
@@ -107,13 +107,13 @@ class Main extends Component {
                     <Route path='/coderinfo' component={CoderInfo}></Route>
                     <Route path='/chat/:userid' component={Chat}></Route>
                 </Switch>
-                {currentNav?<Navfoot navList = {navList}></Navfoot>: null}
+                {currentNav?<Navfoot navList = {navList} unReadCount={unReadCount}></Navfoot>: null}
             </div>
         )
     }
 }
 export default connect(
-    state => ({user: state.user}),{getUser}
+    state => ({user: state.user, unReadCount: state.chat.unReadCount}),{getUser}
 )(Main)
 
 /*
