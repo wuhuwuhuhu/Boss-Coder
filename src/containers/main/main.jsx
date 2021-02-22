@@ -16,7 +16,7 @@ import NotFound from '../../components/not-found/not-found'
 import Navfoot from '../../components/nav-footer/nav-foot'
 import Chat from '../chat/chat'
 import {getRedirectTo} from '../../utils'
-import {getUser} from "../../redux/actions";
+import {getUser, updateMsgList} from "../../redux/actions";
 
 class Main extends Component {
 
@@ -113,7 +113,7 @@ class Main extends Component {
     }
 }
 export default connect(
-    state => ({user: state.user, unReadCount: state.chat.unReadCount}),{getUser}
+    state => ({user: state.user, unReadCount: state.chat.unReadCount}),{getUser, updateMsgList}
 )(Main)
 
 /*

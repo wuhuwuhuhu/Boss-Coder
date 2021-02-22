@@ -12,7 +12,7 @@ import userList from '../components/user-list/user-list';
 const authsuccess = (user) => ({type: AUTH_SUCCESS, data: user})
 const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) =>({type: RECEIVE_USER, data: user})
-export const resetUser = (msg) =>({type: RESET_USER, data: msg})
+export const resetUser = (msg) =>{io.socket.close(); return {type: RESET_USER, data: msg}}
 const receiveMsgList = ({users, chatMsgs, userid}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs, userid} })
 //receive one message
 const receiveMsg = ({chatMsg, userid}) => ({type: REVEIVE_MSG, data: {chatMsg, userid}})
@@ -39,7 +39,7 @@ export const register = (user) => {
         const response = await reqRegister({username, password, type})
         const result = response.data
         if(result.code === 0){
-            //success
+            //success 
             getMsgList(dispatch, result.data._id)
             dispatch(authsuccess(result.data))
         } else {
@@ -142,6 +142,11 @@ async function getMsgList(dispatch, userid) {
        const {users, chatMsgs} = result.data
        dispatch(receiveMsgList({users, chatMsgs, userid}))
 
+    }
+}
+export const updateMsgList = (userid) => {
+    return dispatch => {
+        getMsgList(dispatch, userid)
     }
 }
 

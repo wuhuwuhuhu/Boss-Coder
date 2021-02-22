@@ -83,7 +83,9 @@ class Chat extends Component {
         const targetId = this.props.match.params.userid
         //const chatId = [meId, targetId].sort().join('-')
         const target = users[targetId]
-
+        if(!target) {
+            return null
+        }
         //filter chatMsgs
         //chatMsgs.filter(msg => msg.chat_id === chatId) //use chatId 
         //const msgs = chatMsgs.filter(msg => msg.from === targetId || msg.to === targetId)

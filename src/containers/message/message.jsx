@@ -7,8 +7,10 @@ import {connect} from 'react-redux'
 
 import {List, Badge} from 'antd-mobile'
 
+import {updateMsgList} from '../../redux/actions'
 const Item = List.Item
 const Brief = Item.Brief
+
 function getLastMsgs(user, users, chatMsgs){
     const lastMsgObjs = {}
     chatMsgs.forEach(chat => {
@@ -35,6 +37,7 @@ function getLastMsgs(user, users, chatMsgs){
     })
     const lastMsgs = lastMsgsArr.map(msg => {
         const targetId = msg.from === user._id? msg.to: msg.from
+        if(!users[targetId]) throw "Error: need to update data."
         const targetAvatar = users[targetId].avatar
         const targetUsername = users[targetId].username
         const content = msg.content
@@ -47,13 +50,21 @@ function getLastMsgs(user, users, chatMsgs){
 
 }
 class Message extends Component {
+    constructor(props){
+        super(props)
+        this.props.updateMsgList(this.props.user._id)
+    }
     render(){
-
         const {user} = this.props
         const {users, chatMsgs} = this.props.chat
-
+        let lastMsgs
+        try {
+            lastMsgs = getLastMsgs(user, users, chatMsgs)
+        } catch (error) {
+            return null
+        }
         //classify chatMsgs by chat_id
-        const lastMsgs = getLastMsgs(user, users, chatMsgs)
+        
 
         return(
             <div>
@@ -81,5 +92,5 @@ export default connect(
         user: state.user,
         chat: state.chat 
     }),
-    {}
+    {updateMsgList}
 )(Message)

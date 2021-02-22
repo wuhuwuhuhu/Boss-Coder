@@ -1,4 +1,5 @@
 ### Boss & Coder coder employment recruitment application
+![image](https://github.com/wuhuwuhuhu/Boss-and-Coder_client/blob/master/demo.gif)
 * This project is a coder employment recruitment SPA(single-page application), including separated front-end and backend.
 ### Technical selection
 

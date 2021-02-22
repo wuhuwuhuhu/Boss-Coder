@@ -21,7 +21,7 @@ class Navfoot extends Component {
         
         return(
             <div>
-                <TabBar>
+                <TabBar >
                     {
                         
                         navList.map((nav,index) => (
